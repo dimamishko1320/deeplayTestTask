@@ -1,8 +1,9 @@
-import java.io.*;
 import java.util.Map;
 
 import static java.lang.Math.min;
 import static java.util.Arrays.fill;
+
+
 
 public class Solution {
 
@@ -10,23 +11,16 @@ public class Solution {
      *
      * @param field  game field
      * @param race race
-     * @return shortest path length
+     * @return shortest distance from top left to bottom right
      */
     public static int getResult(String field, String race){
-        Rules rules;
-        int rez = 0;
-        try {
-            rules = new Rules();
-        } catch (IOException e) {
-            System.out.println("Error reading settings");
-            return -1;
-        }
+        Rules rules = new Rules();
         if(field.length()!=16){
-            System.out.println("Field is incorrect");
+            System.out.println("Incorrect field size - "+field.length());
             return -1;
         }
-        if(!rules.getRacesCoding().containsValue(race) || !rules.getRacesAndCellCosts().containsKey(race)){
-            System.out.println("Incorrect race");
+        if(!rules.getRacesAndShortName().containsValue(race) || !rules.getRacesAndObstacleCosts().containsKey(race)){
+            System.out.println("Incorrect race - "+race);
             return -1;
         }
 
@@ -38,7 +32,7 @@ public class Solution {
                 if(cellAndCost.containsKey(fieldByChars[i])){
                     gameFieldMatrix[i]=cellAndCost.get(fieldByChars[i]);
                 }else{
-                    System.out.println("Field is incorrect");
+                    System.out.println("incorrect obstacles on the field");
                     return -1;
                 }
         }
@@ -90,23 +84,30 @@ public class Solution {
         return graph;
     }
 
+    /**
+     *
+     * @param start the starting point from which
+     *              we calculate the distance to all others
+     * @param graph graph
+     * @return  array of distances from the start point to all others
+     */
     private static int[] dijkstra(int start, int[][] graph){
         int INF = Integer.MAX_VALUE / 2;
         int vNum = graph.length;
-        boolean[] used = new boolean [vNum]; // массив пометок
-        int[] dist = new int [vNum]; // массив расстояния. dist[v] = минимальное_расстояние(start, v)
-        fill(dist, INF); // устанаавливаем расстояние до всех вершин INF
-        dist[start] = 0; // для начальной вершины положим 0
+        boolean[] used = new boolean [vNum];
+        int[] dist = new int [vNum];
+        fill(dist, INF);
+        dist[start] = 0;
         for (;;) {
             int v = -1;
-            for (int nv = 0; nv < vNum; nv++) // перебираем вершины
-            if (!used[nv] && dist[nv] < INF && (v == -1 || dist[v] > dist[nv])) // выбираем самую близкую непомеченную вершину
-            v = nv;
-            if (v == -1) break; // ближайшая вершина не найдена
-            used[v] = true; // помечаем ее
             for (int nv = 0; nv < vNum; nv++)
-            if (!used[nv] && graph[v][nv] < INF) // для всех непомеченных смежных
-            dist[nv] = min(dist[nv], dist[v] + graph[v][nv]); // улучшаем оценку расстояния (релаксация)
+            if (!used[nv] && dist[nv] < INF && (v == -1 || dist[v] > dist[nv]))
+            v = nv;
+            if (v == -1) break;
+            used[v] = true;
+            for (int nv = 0; nv < vNum; nv++)
+            if (!used[nv] && graph[v][nv] < INF)
+            dist[nv] = min(dist[nv], dist[v] + graph[v][nv]);
            }
         return dist;
     }

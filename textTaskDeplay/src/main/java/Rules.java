@@ -2,18 +2,21 @@ import java.io.*;
 import java.util.*;
 
 /**
- *
+ *A class for reading all information
+ * about the names of creatures,
+ * the names of obstacles and the cost of moving
+ * from a file.
  */
 public class Rules {
-    private Map<String, String> racesCoding;
-    private Map<String, String> cellCoding;
-    private Map<String, int[]> racesAndCellCosts;
+    private final Map<String, String> racesAndShortName;
+    private final Map<String, String> obstacleAndShortName;
+    private final Map<String, int[]> racesAndObstacleCosts;
 
 
-    public Rules() throws IOException {
-        this.racesCoding = new HashMap<>();
-        this.cellCoding = new LinkedHashMap<>();
-        this.racesAndCellCosts = new HashMap<>();
+    public Rules(){
+        this.racesAndShortName = new HashMap<>();
+        this.obstacleAndShortName = new LinkedHashMap<>();
+        this.racesAndObstacleCosts = new HashMap<>();
         readRulesFromFile();
     }
 
@@ -39,59 +42,46 @@ public class Rules {
             while (line != null) {
                 String[] arr = line.split(",");
                 if(arr.length==2){
-                    cellCoding.put(arr[0].trim(), arr[1].trim());
+                    obstacleAndShortName.put(arr[0].trim(), arr[1].trim());
                 }
-                if(arr.length==cellCoding.size()+2){
-                    racesCoding.put(arr[0].trim(), arr[1].trim());
-                    int[] costs = new int[cellCoding.size()];
+                if(arr.length== obstacleAndShortName.size()+2){
+                    racesAndShortName.put(arr[0].trim(), arr[1].trim());
+                    int[] costs = new int[obstacleAndShortName.size()];
                     for(int i=2; i< arr.length; i++){
                         costs[i-2]=Integer.parseInt(arr[i].trim());
                     }
-                    racesAndCellCosts.put(arr[1].trim(), costs);
+                    racesAndObstacleCosts.put(arr[1].trim(), costs);
                 }
                 line = reader.readLine();
             }
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
 
-    
+    /**
+     *
+     * @param race race
+     * @return the cost of each cell for a certain race
+     */
     public Map<String, Integer> getCellCostForRace(String race){
         Map<String, Integer> costsCells = new HashMap<>();
         int index = 0;
-        int[] weight = racesAndCellCosts.get(race);
-        for (Map.Entry<String, String> entry :cellCoding.entrySet()) {
+        int[] weight = racesAndObstacleCosts.get(race);
+        for (Map.Entry<String, String> entry : obstacleAndShortName.entrySet()) {
             costsCells.put(entry.getValue(), weight[index]);
             index++;
         }
         return costsCells;
     }
 
-    public Map<String, String> getRacesCoding() {
-        return racesCoding;
+    public Map<String, String> getRacesAndShortName() {
+        return racesAndShortName;
     }
 
-    public void setRacesCoding(Map<String, String> racesCoding) {
-        this.racesCoding = racesCoding;
+    public Map<String, int[]> getRacesAndObstacleCosts() {
+        return racesAndObstacleCosts;
     }
 
-    public Map<String, String> getCellCoding() {
-        return cellCoding;
-    }
-
-    public void setCellCoding(Map<String, String> cellCoding) {
-        this.cellCoding = cellCoding;
-    }
-
-    public Map<String, int[]> getRacesAndCellCosts() {
-        return racesAndCellCosts;
-    }
-
-    public void setRacesAndCellCosts(Map<String, int[]> racesAndCellCosts) {
-        this.racesAndCellCosts = racesAndCellCosts;
-    }
 }
