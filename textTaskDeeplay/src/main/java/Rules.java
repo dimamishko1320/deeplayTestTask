@@ -2,7 +2,7 @@ import java.io.*;
 import java.util.*;
 
 /**
- *A class for reading all information
+ * A class for reading all information
  * about the names of creatures,
  * the names of obstacles and the cost of moving
  * from a file.

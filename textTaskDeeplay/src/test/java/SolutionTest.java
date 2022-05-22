@@ -3,8 +3,6 @@ import org.junit.Test;
 
 
 public class SolutionTest {
-
-
     @Test
     public void getMinDistance() {
         String field1 = "STWSWTPPTPTTPWPP";
